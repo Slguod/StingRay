@@ -1,4 +1,4 @@
-<style>
+
 body {
   margin: 0;
 }
@@ -7,6 +7,10 @@ body {
 .topnav {
   background-color: #596b83;
   overflow: hidden;
+  position: fixed;       /* 👈 This makes it stay fixed */
+  top: 0;                /* 👈 Aligns it to the top */
+  width: 100%;           /* 👈 Ensures it stretches full width */
+  z-index: 1000;         /* 👈 Keeps it above other elements */
 }
 
 /* Style the links inside the navigation bar */
@@ -43,7 +47,6 @@ ul {
   background-color: #dee9ef;
   position: fixed;
   height: 100%;
-  overflow: auto;
 }
 
 li a {
@@ -57,4 +60,83 @@ li a:hover:not(.active) {
   background-color: #555;
   color: white;
 }
-</style>
+
+.table1  {
+  border: 1px solid black;
+  
+}
+
+.table1 th  {
+  border-bottom: 1px solid black ;
+  border-right: 1px solid black;
+  position: static ;
+}
+
+.table1 tbody tr:nth-of-type(even) {
+  background-color: #dee9ef;
+}
+
+.table1 tr {
+  scroll-snap-align: start;
+}
+
+.scrollable-table {
+  height: 287px;
+  width: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+}
+
+.table2  {
+  border: 1px solid black;
+  
+}
+
+.table2 th  {
+  border-bottom: 1px solid black ;
+  border-right: 1px solid black;
+  position: sticky ;
+}
+
+.table2 tbody tr:nth-of-type(even) {
+  background-color: #dee9ef;
+}
+
+.table2 tr {
+  scroll-snap-align: start;
+}
+
+.scrollable-table2 {
+  height: 287px;
+  width: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+
+}
+
+.table3  {
+  border: 1px solid black;
+  
+}
+
+.table3 th  {
+  border-bottom: 1px solid black ;
+  border-right: 1px solid black;
+  position: static ;
+}
+
+.table3 tbody tr:nth-of-type(even) {
+  background-color: #dee9ef;
+}
+
+.table3 tr {
+  scroll-snap-align: start;
+}
+
+.scrollable-table3 {
+  height: 287px;
+  width: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+
+}

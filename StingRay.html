@@ -11,6 +11,7 @@
 html,body,h1,h2,h3,h4,h5 {font-family: "Saira"}
 </style>
 </head>
+  <script src="dashboard.js"></script>
 <body class="w3-light-grey">
 
 <body>
@@ -42,17 +43,83 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Saira"}
 </ul>
 
 <div style="margin-left:20%;padding:1px 16px;height:1000px;">
-  <h2>Fixed Full-height Side Nav</h2>
-  <h3>Try to scroll this area, and see how the sidenav sticks to the page</h3>
-  <p>Notice that this div element has a left margin of 25%. This is because the side navigation is set to 25% width. If you remove the margin, the sidenav will overlay/sit on top of this div.</p>
-  <p>Also notice that we have set overflow:auto to sidenav. This will add a scrollbar when the sidenav is too long (for example if it has over 50 links inside of it).</p>
-  <p>Some text..</p>
-  <p>Some text..</p>
-  <p>Some text..</p>
-  <p>Some text..</p>
-  <p>Some text..</p>
-  <p>Some text..</p>
-  <p>Some text..</p>
+   <!-- Incident Calendar Section -->
+    <section>
+      <h2>Incident Calendar</h2>
+      <div class="scrollable-table">
+      <table class= "table1" style="width:100%">
+        <thead>
+          <tr>
+            <th style="width:15%">Date</th>
+            <th style="width:15%">User</th>
+            <th style="width:55%">Action</th>
+            <th style="width:15%">Time</th>
+          </tr>
+        </thead>
+        <tbody id="incident-log">
+        </tbody>
+      </table>
+      </div>
+      </section>
+
+  <h2>Data Management</h2>
+  <div class="data-management-container">
+    <div class="data-management-header">
+      <div class="search-bar">
+        <input type="text" placeholder="Search...">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+      <div class="action-buttons">
+        <button id="createDbButton">
+            <i class="fas fa-plus"></i> Create Database
+        </button>
+        <button id="uploadDbButton">
+            <i class="fas fa-upload"></i> Upload Data File
+        </button> </div>
+    </div>
+  </div>
+
+    <div id="createDbForm" class="input-group">
+        <h3>Create New Database</h3>
+        <label for="databaseName">Database Name:</label>
+        <input type="text" id="databaseName" placeholder="Enter new database name"/>
+        <button onclick="createDatabase()">Save</button>
+    </div>
+
+    <div id="uploadDbForm" class="input-group">
+        <h3>Upload CSV/Excel File for Storage</h3> <label for="dumpFile">Select CSV or Excel file:</label> <input type="file" id="dumpFile" accept=".csv,.xls,.xlsx" /> <button onclick="uploadDatabaseDump()">Upload</button> </div>
+
+    
+        <h2>Available Databases</h2>
+        <div class="scrollable-table2">
+      <table class= "table2" style="width:100%">
+        <thead>
+          <tr>
+            <th style="width:15%">Timestamp</th>
+            <th style="width:15%">Username</th>
+            <th style="width:55%">Action</th>
+            <th style="width:15%">Time</th>
+          </tr>
+        </thead>
+        <tbody id="databaseList">
+        </tbody>
+      </table>
+    </div>
+
+      <h3>Incident Log</h3>
+      <div class="scrollable-table">
+      <table class= "table3" style="width:100%">
+        <thead>
+          <tr>
+            <th style="width:15%">Timestamp</th>
+            <th style="width:15%">Username</th>
+            <th style="width:55%">Action</th>
+            <th style="width:15%">Time</th>
+          </tr>
+        </thead>
+        <tbody id="incident-log">
+        </tbody>
+      </table>
 </div>
 
 </body>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Report History</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Saira">
+  <link rel="stylesheet" href="Stingray.css" />
+  <style>
+    html, body, h1, h2, h3, h4, h5 {
+      font-family: "Saira", sans-serif;
+    }
+
+    .main-content {
+      margin-left: 20%;
+      padding: 1px 16px;
+    }
+
+    .section-header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-top: 20px;
+    }
+
+    .report-card {
+      background-color: #d3d3d3;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .report-row {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .report-left, .report-right {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .report-bold {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body class="w3-light-grey">
+
+<!-- Top Navigation Bar -->
+<div class="topnav">
+  <a href="#logo">Logo</a>
+  <div class="topnav-right">
+    <a href="#settings">
+      <img src="https://cdn-icons-png.flaticon.com/512/3953/3953226.png" style="width:25px;height:25px;">
+    </a>
+    <a href="#account">
+      <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" style="width:25px;height:25px;">
+    </a>
+  </div>
+</div>\
+
+<div class="main-content" style="margin-top: 40px;"></div>
+
+<!-- Sidebar Navigation -->
+<ul>
+  <li><a href="StingRay.html">
+    <img src="https://cdn-icons-png.flaticon.com/512/13135/13135965.png" style="width:25px;height:25px;"> My Dashboard
+  </a></li>
+  <li><a href="#log_analysis">
+    <img src="https://cdn-icons-png.flaticon.com/512/9422/9422925.png" style="width:25px;height:25px;"> Log Analysis
+  </a></li>
+  <li><a href="reports.html">
+    <img src="https://cdn-icons-png.flaticon.com/512/1055/1055644.png" style="width:25px;height:25px;"> Reports
+  </a></li>
+  <li><a href="threat-detection.html">
+    <img src="https://cdn-icons-png.flaticon.com/512/10412/10412137.png" style="width:25px;height:25px;"> Threat Detection
+  </a></li>
+</ul>
+
+<!-- Main Report History Content -->
+<div class="main-content">
+  <div class="section-header">Report History</div>
+
+  <!-- Example Report Cards -->
+  <div class="report-card">
+    <div class="report-row">
+      <div class="report-left">
+        <p>Incident ID: <span class="report-bold">058913</span></p>
+        <p>Date: 17-3-2025</p>
+        <p>Time: 10:52:47 AM</p>
+      </div>
+      <div class="report-right">
+        <p>Database: <span class="report-bold">MySQL</span></p>
+        <p>Message: General error: <span class="report-bold">Deadlock</span> found when trying to get lock; Try restarting transaction</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-card">
+    <div class="report-row">
+      <div class="report-left">
+        <p>Incident ID: <span class="report-bold">058913</span></p>
+        <p>Date: 17-3-2025</p>
+        <p>Time: 10:52:47 AM</p>
+      </div>
+      <div class="report-right">
+        <p>Database: <span class="report-bold">MySQL</span></p>
+        <p>Message: General error: <span class="report-bold">Deadlock</span> found when trying to get lock; Try restarting transaction</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add more report cards as needed -->
+</div>
+
+</body>
+</html>

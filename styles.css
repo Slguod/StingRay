@@ -96,3 +96,8 @@ button {
 button:hover {
   background-color: #e0e0e0;
 }
+
+h1 {
+  font-size: 20px;
+  text-decoration: underline;
+}

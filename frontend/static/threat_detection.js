@@ -47,20 +47,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to determine severity class and text based on threat label
     function getSeverityClass(threatLabel) {
         threatLabel = String(threatLabel).toLowerCase(); // Ensure it's a string and lowercase for robust comparison
-        if (threatLabel.includes('ddos') || threatLabel.includes('infiltration') || threatLabel.includes('bot') || threatLabel.includes('web attack')) {
+        if (threatLabel.includes('ddos') ||
+            threatLabel.includes('infiltration') ||
+            threatLabel.includes('bot') ||
+            threatLabel.includes('dos goldeneye') || // NEW
+            threatLabel.includes('dos hulk') ||     // NEW
+            threatLabel.includes('dos slowloris')) { // NEW
             return { className: 'High', text: 'High' };
-        } else if (threatLabel.includes('portscan') || threatLabel.includes('brute force') || threatLabel.includes('xss') || threatLabel.includes('sql injection')) {
+        } else if (threatLabel.includes('portscan') ||
+                   threatLabel.includes('brute force') ||
+                   threatLabel.includes('xss') ||
+                   threatLabel.includes('sql injection') ||
+                   threatLabel.includes('ftp patator')) { // NEW
             return { className: 'Moderate', text: 'Moderate' };
-        } else if (threatLabel.includes('benign')) { // Should ideally be filtered out by backend, but here for completeness
+        } else if (threatLabel.includes('benign')) {
             return { className: 'Low', text: 'Low' };
         } else {
             return { className: 'Unknown', text: 'Unknown' };
         }
-    }
-
-    // Function to generate a simple incident ID (6-digit number)
-    function generateIncidentId() {
-        return Math.floor(100000 + Math.random() * 900000);
     }
 
     // Function to display classification results as cards

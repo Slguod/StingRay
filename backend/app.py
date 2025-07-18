@@ -81,6 +81,32 @@ class DatasetEntry(db.Model):
             'details': self.details,
             'created_at': self.created_at.isoformat()
         }
+        
+    # In app.py, find your existing db.Model definitions (e.g., IncidentLog, DatasetEntry)
+# Add this new model below them:
+
+class ClassifiedThreat(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    # The display ID for the card, e.g., #664961 or #FLOW-123
+    incident_id_display = db.Column(db.String(255), nullable=False)
+    predicted_threat_label = db.Column(db.String(100), nullable=False)
+    # Timestamp of the incident, extracted from data or classification time
+    timestamp = db.Column(db.String(50), nullable=False)
+    source_filename = db.Column(db.String(255), nullable=False) # Which file it came from
+    # Store the entire incident row as JSON for detailed modal view
+    full_details = db.Column(db.JSON, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc)) # When it was saved to DB
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'incident_id_display': self.incident_id_display,
+            'predicted_threat_label': self.predicted_threat_label,
+            'timestamp': self.timestamp,
+            'source_filename': self.source_filename,
+            'full_details': self.full_details,
+            'created_at': self.created_at.isoformat()
+        }    
 
 # Helper function for logging incidents (Existing)
 def log_incident(username='system', action='unspecified action'):
@@ -96,10 +122,16 @@ def log_incident(username='system', action='unspecified action'):
         print(f"Error logging incident: {e}")
 
 # Function to create tables (Called once at application startup) (Existing)
+# In app.py, locate your create_tables() function:
+
 def create_tables():
     db.create_all()
+    # Check if tables are empty and log initialization, including the new table
     if IncidentLog.query.count() == 0:
         log_incident('system', 'Database tables initialized and connected.')
+    # Add this line to ensure ClassifiedThreat table is initialized
+    if ClassifiedThreat.query.count() == 0:
+        app.logger.info("ClassifiedThreats table initialized.")
 
 
 # --- NEW: Model Loading and Classification Functions ---
@@ -217,15 +249,72 @@ def classify_uploaded_data(data_df: pd.DataFrame, source_id: str) -> pd.DataFram
     original_data_for_output['Predicted_Threat_Label'] = final_decoded_predictions
 
     # Log detected threats
+   # In app.py, locate the classify_uploaded_data function.
+# Find the loop where you log incidents (for index, row in original_data_for_output.iterrows():)
+# Add the code below inside that 'if predicted_label != 'Benign':' block:
+
+    # Log detected threats and save to ClassifiedThreats table
     for index, row in original_data_for_output.iterrows():
         predicted_label = row['Predicted_Threat_Label']
-        if predicted_label != 'Benign': # Log only if it's a detected threat
+        if predicted_label != 'Benign': # Log and save only if it's a detected threat
             log_action = f"Threat Detected: {predicted_label} (Row from {source_id})"
             log_incident(username='threat_detector', action=log_action)
 
+            # NEW: Generate incident ID for saving
+            # This ID needs to be generated consistently with how it's displayed on frontend
+            # For simplicity, we'll use a random 6-digit number here,
+            # but in a real system, you might use a more robust ID system or a hash of the row.
+            incident_id_for_db = str(np.random.randint(100000, 999999))
+            
+            # Determine timestamp for saving
+            incident_timestamp = datetime.now(timezone.utc).isoformat()
+            if 'Timestamp' in row and pd.notna(row['Timestamp']):
+                try:
+                    # Attempt to parse existing timestamp if available and valid
+                    # Handle various datetime string formats
+                    if isinstance(row['Timestamp'], (datetime, pd.Timestamp)):
+                        incident_timestamp = row['Timestamp'].isoformat()
+                    else:
+                        # Try common formats, including those with/without timezone
+                        formats_to_try = [
+                            '%Y-%m-%d %H:%M:%S.%f%z', # With microseconds and timezone
+                            '%Y-%m-%d %H:%M:%S%z',    # Without microseconds, with timezone
+                            '%Y-%m-%d %H:%M:%S.%f',   # With microseconds, no timezone
+                            '%Y-%m-%d %H:%M:%S',      # Without microseconds, no timezone
+                            '%m/%d/%Y %I:%M:%S %p'    # Common US format
+                        ]
+                        for fmt in formats_to_try:
+                            try:
+                                dt_obj = datetime.strptime(str(row['Timestamp']), fmt)
+                                # If timezone info is missing, assume UTC for consistency
+                                if dt_obj.tzinfo is None:
+                                    dt_obj = dt_obj.replace(tzinfo=timezone.utc)
+                                incident_timestamp = dt_obj.isoformat()
+                                break
+                            except ValueError:
+                                continue
+                except Exception as e:
+                    app.logger.warning(f"Could not parse timestamp '{row['Timestamp']}' for saving: {e}. Using current UTC time.")
+            
+            # Save the classified threat to the database
+            try:
+                new_classified_threat = ClassifiedThreat(
+                    incident_id_display=incident_id_for_db,
+                    predicted_threat_label=predicted_label,
+                    timestamp=incident_timestamp,
+                    source_filename=source_id,
+                    full_details=row.to_dict(), # Convert pandas Series (row) to dictionary
+                    created_at=datetime.now(timezone.utc)
+                )
+                db.session.add(new_classified_threat)
+                db.session.commit()
+                app.logger.info(f"Saved classified threat (ID: {incident_id_for_db}, Label: {predicted_label}) to database.")
+            except Exception as e:
+                db.session.rollback()
+                app.logger.error(f"Error saving classified threat to database: {e}", exc_info=True)
+
     app.logger.info(f"Classification complete for {source_id}. Returning results.")
     return original_data_for_output
-
 
 # --- ROUTES (Existing and Modified) ---
 
@@ -442,6 +531,16 @@ def download_uploaded_file(filename):
     except Exception as e:
         print(f"General error downloading file {filename}: {e}")
         return jsonify({"error": f"Failed to download file: {str(e)}"}), 500
+    
+@app.route('/api/threat_reports', methods=['GET'])
+def get_threat_reports():
+    try:
+        # Order by creation time, newest first
+        threats = ClassifiedThreat.query.order_by(ClassifiedThreat.created_at.desc()).all()
+        return jsonify([threat.to_dict() for threat in threats]), 200
+    except Exception as e:
+        app.logger.error(f"Error fetching classified threats for reports: {e}", exc_info=True)
+        return jsonify({"error": f"Failed to fetch threat reports: {str(e)}"}), 500
         
 @app.route('/api/calendar_activity', methods=['GET'])
 def get_calendar_activity():

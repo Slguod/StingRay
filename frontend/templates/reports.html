@@ -1,121 +1,232 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Report History</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Saira">
-  <link rel="stylesheet" href="/static/Stingray.css" />
-  <style>
-    html, body, h1, h2, h3, h4, h5 {
-      font-family: "Saira", sans-serif;
-    }
+    <title>Reports</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Saira">
+    <link rel="stylesheet" href="/static/Stingray.css" />
+    <style>
+        html, body, h1, h2, h3, h4, h5 {
+            font-family: "Saira", sans-serif;
+        
+        
+        li a {
+            display: block;
+            color: #000;
+            padding: 8px 16px;
+            text-decoration: none;
+        }
+        li a:hover {
+            background-color: #555;
+            color: white;
+        }
+        li a img {
+            margin-right: 10px;
+        }
 
-    .main-content {
-      margin-left: 20%;
-      padding: 1px 16px;
-    }
+        /* Main content area adjustment to account for fixed sidebar and topnav */
+        .main-content {
+            margin-left: 20%; /* Space for the sidebar */
+            padding: 1px 16px;
+            margin-top: 60px; /* Space for the topnav, as per your original file */
+            padding-bottom: 30px; /* Add some padding at the bottom */
+        }
 
-    .section-header {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      padding-top: 20px;
-    }
+        .section-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-top: 20px;
+        }
 
-    .report-card {
-      background-color: #d3d3d3;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 15px;
-    }
+        /* Styles for the new classification results cards (copied from threat-detection.html) */
+        #threatReportsContainer { /* Unique ID for reports page */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px; /* Spacing between cards */
+            justify-content: flex-start; /* Align cards to the start */
+            max-height: 70vh; /* Adjust as needed */
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
 
-    .report-row {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
+        .incident-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            /* Smaller card size for summary view */
+            width: calc(33.333% - 10px); /* Three cards per row */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-sizing: border-box; /* Include padding and border in the width */
+            overflow: hidden; /* Ensure content doesn't spill out of rounded corners */
+        }
 
-    .report-left, .report-right {
-      flex: 1;
-      min-width: 200px;
-    }
+        /* Adjust for smaller screens */
+        @media (max-width: 1200px) {
+            .incident-card {
+                width: calc(50% - 10px); /* Two cards per row */
+            }
+        }
+        @media (max-width: 768px) {
+            .incident-card {
+                width: 100%; /* One card per row */
+            }
+        }
 
-    .report-bold {
-      font-weight: bold;
-    }
-  </style>
+        .incident-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Card Header Style */
+        .card-header-custom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #f2f2f2; /* Light gray header background */
+            border-bottom: 1px solid #ddd;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .card-header-custom h4 {
+            margin: 0;
+            font-size: 1em; /* Smaller font for header ID */
+            color: #007bff; /* Blue color for Incident ID */
+        }
+
+        .incident-card-body {
+            padding: 15px;
+        }
+
+        .incident-card-body h5 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #dc3545; /* Red for threat type */
+            font-size: 1.1em;
+        }
+
+        .incident-card-body p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        /* Color-coded threat alert badge */
+        .threat-level-badge {
+            padding: 5px 10px;
+            border-radius: 20px; /* Makes it pill-shaped/circular */
+            font-weight: bold;
+            color: white;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        .threat-level-badge.High { background-color: #f44336; } /* Red */
+        .threat-level-badge.Moderate { background-color: #ff9800; } /* Orange */
+        .threat-level-badge.Low { background-color: #4CAF50; } /* Green */
+        .threat-level-badge.Benign { background-color: #a0a0a0; } /* Grey for benign */
+        .threat-level-badge.Unknown { background-color: #6c757d; } /* Grey for unknown */
+
+
+        /* Modal styles */
+        .w3-modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 100; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            padding-top: 60px;
+        }
+
+        .w3-modal-content {
+            margin: 5% auto; /* 5% from the top and centered */
+        }
+
+        .w3-container.w3-padding p {
+            word-wrap: break-word; /* Ensure long text wraps in modal */
+        }
+        /* Specific style for threat-level inside modal to prevent absolute positioning issues */
+        #modalContent .threat-level-badge {
+            position: unset; /* Override absolute positioning */
+        }
+    </style>
 </head>
 <body class="w3-light-grey">
 
-<!-- Top Navigation Bar -->
 <div class="topnav">
-  <a href="#logo">Logo</a>
-  <div class="topnav-right">
-    <a href="#settings">
-      <img src="https://cdn-icons-png.flaticon.com/512/3953/3953226.png" style="width:25px;height:25px;">
-    </a>
-      <a href="{{ url_for('user_profile') }}">
-        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" style="width:25px;height:25px;">
-    </a>
-  </div>
-</div>\
+    <a href="#logo">Logo</a>
+    <div class="topnav-right">
+        <a href="#settings">
+            <img src="https://cdn-icons-png.flaticon.com/512/3953/3953226.png" style="width:25px;height:25px;">
+        </a>
+        <a href="{{ url_for('user_profile') }}">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" style="width:25px;height:25px;">
+        </a>
+    </div>
+</div>
 
-<div class="main-content" style="margin-top: 40px;"></div>
+<div class="main-content" style="margin-top: 60px;"></div>
 
-<!-- Sidebar Navigation -->
 <ul>
-  <li><a href="{{ url_for('dashboard') }}">
-    <img src="https://cdn-icons-png.flaticon.com/512/13135/13135965.png" style="width:25px;height:25px;"> My Dashboard
-  </a></li>
-  <li><a href="#log_analysis">
-    <img src="https://cdn-icons-png.flaticon.com/512/9422/9422925.png" style="width:25px;height:25px;"> Log Analysis
-  </a></li>
-  <li><a href="{{ url_for('reports') }}">
-    <img src="https://cdn-icons-png.flaticon.com/512/1055/1055644.png" style="width:25px;height:25px;"> Reports
-  </a></li>
-  <li><a href="{{ url_for('threat_detection') }}">
-    <img src="https://cdn-icons-png.flaticon.com/512/10412/10412137.png" style="width:25px;height:25px;"> Threat Detection
-  </a></li>
+    <li><a href="{{ url_for('dashboard') }}">
+        <img src="https://cdn-icons-png.flaticon.com/512/13135/13135965.png" style="width:25px;height:25px;"> My Dashboard
+    </a></li>
+    <li><a href="#log_analysis">
+        <img src="https://cdn-icons-png.flaticon.com/512/9422/9422925.png" style="width:25px;height:25px;"> Log Analysis
+    </a></li>
+    <li><a href="{{ url_for('reports') }}">
+        <img src="https://cdn-icons-png.flaticon.com/512/1055/1055644.png" style="width:25px;height:25px;"> Reports
+    </a></li>
+    <li><a href="{{ url_for('threat_detection') }}">
+        <img src="https://cdn-icons-png.flaticon.com/512/10412/10412137.png" style="width:25px;height:25px;"> Threat Detection
+    </a></li>
 </ul>
 
-<!-- Main Report History Content -->
 <div class="main-content">
-  <div class="section-header">Report History</div>
+    <div class="section-header">Threat Reports</div>
 
-  <!-- Example Report Cards -->
-  <div class="report-card">
-    <div class="report-row">
-      <div class="report-left">
-        <p>Incident ID: <span class="report-bold">058913</span></p>
-        <p>Date: 17-3-2025</p>
-        <p>Time: 10:52:47 AM</p>
-      </div>
-      <div class="report-right">
-        <p>Database: <span class="report-bold">MySQL</span></p>
-        <p>Message: General error: <span class="report-bold">Deadlock</span> found when trying to get lock; Try restarting transaction</p>
-      </div>
+    <div class="reports-container">
+        <h2>Saved Threat Incidents</h2>
+        <div id="threatReportsContainer">
+            <p>Loading threat reports...</p>
+        </div>
     </div>
-  </div>
-
-  <div class="report-card">
-    <div class="report-row">
-      <div class="report-left">
-        <p>Incident ID: <span class="report-bold">058913</span></p>
-        <p>Date: 17-3-2025</p>
-        <p>Time: 10:52:47 AM</p>
-      </div>
-      <div class="report-right">
-        <p>Database: <span class="report-bold">MySQL</span></p>
-        <p>Message: General error: <span class="report-bold">Deadlock</span> found when trying to get lock; Try restarting transaction</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Add more report cards as needed -->
 </div>
+
+<!-- The Modal Structure for Incident Details (copied from threat-detection.html) -->
+<div id="incidentDetailsModal" class="w3-modal">
+    <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width: 600px; border-radius: 8px;">
+        <header class="w3-container w3-teal" style="border-radius: 8px 8px 0 0;">
+            <span onclick="document.getElementById('incidentDetailsModal').style.display='none'"
+                  class="w3-button w3-display-topright">&times;</span>
+            <h2>Incident Details <span id="modalIncidentId"></span></h2>
+        </header>
+        <div class="w3-container w3-padding" id="modalContent">
+            <!-- Details will be injected here by JavaScript -->
+            <p>Loading details...</p>
+        </div>
+        <footer class="w3-container w3-teal" style="border-radius: 0 0 8px 8px;">
+            <p>&nbsp;</p>
+        </footer>
+    </div>
+</div>
+
+<!-- Link to the external JavaScript file -->
+<script src="{{ url_for('static', filename='reports.js') }}"></script>
 
 </body>
 </html>

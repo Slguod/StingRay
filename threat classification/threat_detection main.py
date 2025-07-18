@@ -8,11 +8,11 @@ from imblearn.under_sampling import RandomUnderSampler
 from sklearn.feature_selection import SelectKBest, f_classif
 import joblib
 
-# --- Start of the complete data processing and model training script ---
+
 
 print("Starting full data processing and model training pipeline...")
 
-# Load your combined data
+
 try:
     df = pd.read_csv('MachineLearningCVE/combined_data.csv')
     print("Combined dataset loaded successfully.")
@@ -23,16 +23,16 @@ except Exception as e:
     print(f"An error occurred while loading the CSV: {e}")
     exit()
 
-# Clean column names by stripping whitespace
+
 df.columns = df.columns.str.strip()
 print("\nDataFrame columns after stripping whitespace:")
 print(df.columns.tolist())
 
-# Handle null values
+
 print("\nChecking for initial null values:")
 print(df.isnull().sum().sum()) # Total count of nulls across all columns
 
-# Drop rows with any null values
+
 initial_rows_df = len(df)
 df.dropna(inplace=True)
 rows_after_dropna_df = len(df)
@@ -43,10 +43,10 @@ print(f"Dropped {initial_rows_df - rows_after_dropna_df} rows with null values. 
 categorical_cols = df.select_dtypes(include='object').columns.tolist()
 print(f"\nIdentified categorical columns for encoding: {categorical_cols}")
 
-# Initialize a variable to store the LabelEncoder for the 'Label' column
+
 label_encoder_for_original_target = None
 
-# Label encode categorical columns and store the encoder for the target
+
 for col in categorical_cols:
     le = LabelEncoder()
     if col == 'Label':
@@ -72,12 +72,11 @@ else:
     print("Error: 'Label_encoded' column not found after processing. Please check your label encoding step.")
     exit()
 
-# Filter out only numerical columns from X_initial for feature engineering and scaling
+
 numerical_cols_for_processing = X_initial.select_dtypes(include=np.number).columns
 X_numerical_processed = X_initial[numerical_cols_for_processing]
 print(f"\nNumerical columns selected for processing: {numerical_cols_for_processing.tolist()}")
 
-# Handle infinite values in numerical features
 print("\nChecking for infinite values in numerical features...")
 initial_rows_numerical = len(X_numerical_processed)
 X_numerical_processed.replace([np.inf, -np.inf], np.nan, inplace=True)
@@ -88,7 +87,7 @@ if rows_dropped_due_to_inf_or_nan_numerical > 0:
 else:
     print("No infinite or NaN values found that required dropping rows in numerical features.")
 
-# Align y_initial with the cleaned X_numerical_processed
+
 y_initial = y_initial.loc[X_numerical_processed.index]
 print(f"Shape of X_numerical_processed after cleaning: {X_numerical_processed.shape}, y_initial shape: {y_initial.shape}")
 

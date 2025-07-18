@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Threat Detection</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Saira">
+  <link rel="stylesheet" href="/static/Stingray.css" />
+  <style>
+    html, body, h1, h2, h3, h4, h5 {
+      font-family: "Saira", sans-serif;
+    }
+
+    .main-content {
+      margin-left: 20%;
+      padding: 1px 16px;
+    }
+
+    .section-header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      padding-top: 20px;
+    }
+
+    .threat-header, .threat-entry {
+      display: grid;
+      grid-template-columns: 25% 35% 20% 20%;
+      padding: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .threat-header {
+      background-color: #e2e2e2;
+      font-weight: bold;
+      border-radius: 8px 8px 0 0;
+    }
+
+    .threat-entry {
+      background-color: #fff;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+
+    .threat-entry:hover {
+      border: 1px solid #007bff;
+    }
+
+    .solution-box {
+      background-color: #d3d3d3;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body class="w3-light-grey">
+
+<!-- Top Navigation Bar -->
+<div class="topnav">
+  <a href="#logo">Logo</a>
+  <div class="topnav-right">
+    <a href="#settings">
+      <img src="https://cdn-icons-png.flaticon.com/512/3953/3953226.png" style="width:25px;height:25px;">
+    </a>
+      <a href="{{ url_for('user_profile') }}">
+        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" style="width:25px;height:25px;">
+    </a>
+  </div>
+</div>
+
+<div class="main-content" style="margin-top: 60px;"></div>
+
+<!-- Sidebar Navigation -->
+<ul>
+  <li><a href="{{ url_for('dashboard') }}">
+    <img src="https://cdn-icons-png.flaticon.com/512/13135/13135965.png" style="width:25px;height:25px;"> My Dashboard
+  </a></li>
+  <li><a href="#log_analysis">
+    <img src="https://cdn-icons-png.flaticon.com/512/9422/9422925.png" style="width:25px;height:25px;"> Log Analysis
+  </a></li>
+  <li><a href="{{ url_for('reports') }}">
+    <img src="https://cdn-icons-png.flaticon.com/512/1055/1055644.png" style="width:25px;height:25px;"> Reports
+  </a></li>
+  <li><a href="{{ url_for('threat_detection') }}">
+    <img src="https://cdn-icons-png.flaticon.com/512/10412/10412137.png" style="width:25px;height:25px;"> Threat Detection
+  </a></li>
+</ul>
+
+<!-- Main Threat Detection Content -->
+<div class="main-content">
+  <div class="section-header">Threat Detection and Response</div>
+
+  <!-- Header Row -->
+  <div class="threat-header">
+    <div>Suspicious Entity</div>
+    <div>Activity Case</div>
+    <div>Suspicious Tactic</div>
+    <div>Recommended Solutions</div>
+  </div>
+
+  <!-- Example Threat Rows -->
+  <div class="threat-entry">
+    <div>UserID: 878930</div>
+    <div>Cross-Platform Attack resulting in Data Extraction</div>
+    <div>InitialAccess</div>
+    <div class="solution-box">Monitor logs. Apply least privilege access controls.</div>
+  </div>
+
+  <div class="threat-entry">
+    <div>UserID: 878930</div>
+    <div>Successful Console Brute Force</div>
+    <div>BruteForce Persistence</div>
+    <div class="solution-box">Enable MFA. Lock account after failed attempts.</div>
+  </div>
+
+  <div class="threat-entry">
+    <div>UserID: 878930</div>
+    <div>Cross-Platform Attack resulting in Compromised User</div>
+    <div>LateralMovement</div>
+    <div class="solution-box">Revoke credentials. Monitor internal network activity.</div>
+  </div>
+</div>
+
+</body>
+</html>

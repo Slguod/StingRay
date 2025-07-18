@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>StingRay</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+<link rel="stylesheet"href="https://fonts.googleapis.com/css?family=Saira">
+<link rel="stylesheet" href="{{ url_for('static', filename='Stingray.css') }}" />
+<style>
+html,body,h1,h2,h3,h4,h5 {font-family: "Saira"}
+</style>
+</head>
+<body class="w3-light-grey">
+
+  
+
+<script type="module" src="{{ url_for('static', filename='dashboard.js') }}" defer></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        await fetchAndPopulateUsers();
+        await fetchAndDisplayCalendar();
+        
+        const userSelect = document.getElementById('userSelect');
+        if (userSelect) {
+            userSelect.addEventListener('change', fetchAndDisplayCalendar);
+        }
+    });
+
+    async function fetchAndPopulateUsers() {
+        const userSelect = document.getElementById('userSelect');
+        if (!userSelect) return;
+
+        try {
+            const response = await fetch('/api/users');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const users = await response.json();
+            
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user;
+                option.textContent = user;
+                userSelect.appendChild(option);
+            });
+
+        } catch (error) {
+            console.error('Error fetching user list:', error);
+        }
+    }
+
+    async function fetchAndDisplayCalendar() {
+        const userSelect = document.getElementById('userSelect');
+        const username = userSelect ? userSelect.value : '';
+        
+        const url = username ? `/api/calendar_activity?username=${username}` : '/api/calendar_activity';
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const activeDates = await response.json();
+            const activeDatesSet = new Set(activeDates);
+            
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = today.getMonth();
+
+            const calendarGrid = document.getElementById('calendarGrid');
+            if (!calendarGrid) return;
+            calendarGrid.innerHTML = '';
+
+            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            daysOfWeek.forEach(day => {
+                const dayHeader = document.createElement('div');
+                dayHeader.classList.add('calendar-day-header');
+                dayHeader.textContent = day;
+                calendarGrid.appendChild(dayHeader);
+            });
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            for (let i = 0; i < firstDayOfMonth; i++) {
+                const emptyDiv = document.createElement('div');
+                calendarGrid.appendChild(emptyDiv);
+            }
+
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.classList.add('calendar-day');
+                dayDiv.textContent = day;
+
+                const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                if (activeDatesSet.has(formattedDate)) {
+                    dayDiv.classList.add('active-day');
+                }
+                calendarGrid.appendChild(dayDiv);
+            }
+
+        } catch (error) {
+            console.error('Error fetching calendar activity:', error);
+        }
+    }
+</script>
+<div class="topnav">
+ <a href="#logo">Logo</a>  <div class="topnav-right">
+  <a href="#settings">
+   <img src="https://cdn-icons-png.flaticon.com/512/3953/3953226.png" style="width:25px;height:25px;">
+  </a>
+      <a href="{{ url_for('user_profile') }}">
+        <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" style="width:25px;height:25px;">
+  </a>
+ </div>
+</div>
+
+<div class="main-content" style="margin-top: 60px;"></div>
+
+<ul>
+  <li><a href="{{ url_for('dashboard') }}">
+    <img src="https://cdn-icons-png.flaticon.com/512/13135/13135965.png" style="width:25px;height:25px;"> My Dashboard
+  </a></li>
+  <li><a href="#log_analysis">
+    <img src="https://cdn-icons-png.flaticon.com/512/9422/9422925.png" style="width:25px;height:25px;"> Log Analysis
+  </a></li>
+  <li><a href="{{ url_for('reports') }}">
+    <img src="https://cdn-icons-png.flaticon.com/512/1055/1055644.png" style="width:25px;height:25px;"> Reports
+  </a></li>
+  <li><a href="{{ url_for('threat_detection') }}">
+    <img src="https://cdn-icons-png.flaticon.com/512/10412/10412137.png" style="width:25px;height:25px;"> Threat Detection
+  </a></li>
+</ul>
+
+
+<div style="margin-left:20%;padding:1px 16px;height:1000px;">
+   <section>
+   <h2>Incident Calendar</h2>
+   <div id="incident-calendar-container">
+  <div class="calendar-container">
+    <div class="user-filter">
+    <label for="userSelect">Show calendar for:</label>
+    <select id="userSelect">
+        <option value="">All Users</option>
+    </select>
+</div>
+    <div class="calendar-header" id="calendar-header"></div>
+    <div class="calendar-grid" id="calendar-grid">
+      <div class="calendar-day-header">Sun</div>
+      <div class="calendar-day-header">Mon</div>
+      <div class="calendar-day-header">Tue</div>
+      <div class="calendar-day-header">Wed</div>
+      <div class="calendar-day-header">Thu</div>
+      <div class="calendar-day-header">Fri</div>
+      <div class="calendar-day-header">Sat</div>
+    </div>
+  </div>
+</div>
+   </section>
+
+ <h2>Data Management</h2>
+ <div class="data-management-container">
+  <div class="data-management-header">
+   <div class="search-bar">
+    <input type="text" placeholder="Search...">
+    <i class="fas fa-search search-icon"></i>
+   </div>
+   <div class="action-buttons">
+    <button id="createDbButton">
+      <i class="fas fa-plus"></i> Create Database
+    </button>
+    <button id="uploadDbButton">
+      <i class="fas fa-upload"></i> Upload Data File
+    </button> </div>
+  </div>
+ </div>
+
+  <div id="createDbForm" class="input-group">
+    <h3>Create New Database</h3>
+    <label for="databaseName">Database Name:</label>
+    <input type="text" id="databaseName" placeholder="Enter new database name"/>
+    <button onclick="createDatabase()">Save</button>
+  </div>
+
+  <div id="uploadDbForm" class="input-group">
+    <h3>Upload CSV/Excel File for Storage</h3> <label for="dumpFile">Select CSV or Excel file:</label> <input type="file" id="dumpFile" accept=".csv,.xls,.xlsx" /><button id="uploadFileButton">Upload</button></div>
+
+  
+    <h2>Available Databases</h2>
+    <div class="scrollable-table2">
+   <table class= "table2" style="width:100%">
+    <thead>
+     <tr>
+      <th style="width:15%">Timestamp</th>
+      <th style="width:15%">Username</th>
+      <th style="width:55%">Action</th>
+      <th style="width:15%">Time</th>
+     </tr>
+    </thead>
+        <tbody id="uploadedFilesTableBody">
+    </tbody>
+   </table>
+  </div>
+
+   <h3>Incident Log</h3>
+   <div class="scrollable-table">
+   <table class= "table3" style="width:100%">
+    <thead>
+     <tr>
+      <th style="width:15%">Timestamp</th>
+      <th style="width:15%">Username</th>
+      <th style="width:55%">Action</th>
+     </tr>
+    </thead>
+        <tbody id="incidentLogTableBody">
+    </tbody>
+   </table>
+</div>
+</body>
+</html>

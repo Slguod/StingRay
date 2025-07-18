@@ -1,0 +1,103 @@
+@font-face {
+    font-family: 'JollyLodger';
+    src: url(fonts/JollyLodger-Regular.ttf);
+}
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #55677f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-box {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo img {
+  width: 50px;
+  margin-right: 10px;
+}
+
+.logo h1 {
+  font-family: 'JollyLodger', cursive;
+  font-size: 28px;
+  margin: 0;
+  color: black;
+  text-shadow: 2px 2px #aaa;
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  background-color: #a0b2bf;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: transparent;
+  outline: none;
+  color: #000;
+}
+
+.icon {
+  padding: 0 10px;
+  font-size: 18px;
+  background: #a0b2bf;
+}
+
+.forgot-password {
+  font-size: 12px;
+  color: #333;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 15px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  background-color: white;
+  border: 1px solid #000;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #e0e0e0;
+}
+
+h1 {
+  font-size: 20px;
+  text-decoration: underline;
+}

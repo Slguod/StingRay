@@ -55,7 +55,7 @@ if (registerBtn) {
 
             alert("Account created successfully! Redirecting to user profile.");
             // Redirect to user profile after both auth creation and Firestore write are successful
-            window.location.href = "/userprofile"; // Changed redirection to userprofile
+            window.location.href = "/login"; // Changed redirection to login page
             
         } catch (error) {
             console.error("Error during registration:", error); // Log the full error

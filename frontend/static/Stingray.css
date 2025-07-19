@@ -183,3 +183,10 @@ li a:hover:not(.active) {
   border: 1px solid #007BFF;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
+.calendar-day.active-day {
+    background-color: #007BFF; /* The blue highlight color */
+    color: white;
+    font-weight: bold;
+    border: 1px solid #007BFF;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}

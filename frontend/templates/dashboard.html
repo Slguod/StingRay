@@ -51,58 +51,63 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Saira"}
     }
 
     async function fetchAndDisplayCalendar() {
-        const userSelect = document.getElementById('userSelect');
-        const username = userSelect ? userSelect.value : '';
-        
-        const url = username ? `/api/calendar_activity?username=${username}` : '/api/calendar_activity';
+    // URL of our new backend endpoint
+    const url = '/api/calendar_activity';
 
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const activeDates = await response.json();
-            const activeDatesSet = new Set(activeDates);
-            
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = today.getMonth();
-
-            const calendarGrid = document.getElementById('calendarGrid');
-            if (!calendarGrid) return;
-            calendarGrid.innerHTML = '';
-
-            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            daysOfWeek.forEach(day => {
-                const dayHeader = document.createElement('div');
-                dayHeader.classList.add('calendar-day-header');
-                dayHeader.textContent = day;
-                calendarGrid.appendChild(dayHeader);
-            });
-
-            const firstDayOfMonth = new Date(year, month, 1).getDay();
-            for (let i = 0; i < firstDayOfMonth; i++) {
-                const emptyDiv = document.createElement('div');
-                calendarGrid.appendChild(emptyDiv);
-            }
-
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dayDiv = document.createElement('div');
-                dayDiv.classList.add('calendar-day');
-                dayDiv.textContent = day;
-
-                const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                if (activeDatesSet.has(formattedDate)) {
-                    dayDiv.classList.add('active-day');
-                }
-                calendarGrid.appendChild(dayDiv);
-            }
-
-        } catch (error) {
-            console.error('Error fetching calendar activity:', error);
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const activeDates = await response.json();
+        
+        // We'll use a Set for fast lookups
+        const activeDatesSet = new Set(activeDates);
+        
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth();
+
+        const calendarGrid = document.getElementById('calendar-grid');
+        if (!calendarGrid) return;
+        calendarGrid.innerHTML = ''; // Clear existing days
+
+        // Add day headers
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        daysOfWeek.forEach(day => {
+            const dayHeader = document.createElement('div');
+            dayHeader.classList.add('calendar-day-header');
+            dayHeader.textContent = day;
+            calendarGrid.appendChild(dayHeader);
+        });
+
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        for (let i = 0; i < firstDayOfMonth; i++) {
+            const emptyDiv = document.createElement('div');
+            calendarGrid.appendChild(emptyDiv);
+        }
+
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dayDiv = document.createElement('div');
+            dayDiv.classList.add('calendar-day');
+            dayDiv.textContent = day;
+
+            // Format the current day to 'YYYY-MM-DD' to match the backend format
+            const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+            // Check if this date has an incident
+            if (activeDatesSet.has(formattedDate)) {
+                dayDiv.classList.add('active-day');
+            }
+
+            calendarGrid.appendChild(dayDiv);
+        }
+
+    } catch (error) {
+        console.error('Error fetching calendar activity:', error);
     }
+}
 </script>
 <div class="topnav">
  <a href="#logo">Logo</a>  <div class="topnav-right">

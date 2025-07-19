@@ -99,101 +99,150 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to show incident details in a modal
-    function showIncidentDetails(incidentDetails, incidentIdForModal, predictedThreatLabel) {
-        modalIncidentId.textContent = `#${incidentIdForModal}`;
+function showIncidentDetails(incidentDetails, incidentIdForModal, predictedThreatLabel) {
+    // Get the elements needed for the modal
+    const modalContent = document.getElementById('modalContent');
+    const modalIncidentId = document.getElementById('modalIncidentId');
+    const incidentDetailsModal = document.getElementById('incidentDetailsModal');
+    
+    // Get the report generation button from the modal's header
+    const generateReportBtn = document.getElementById('generateReportBtn');
 
-        let detailsHtml = '';
-        const severity = getSeverityClass(predictedThreatLabel);
+    modalIncidentId.textContent = `#${incidentIdForModal}`;
 
-        detailsHtml += `<p><strong>Predicted Threat:</strong> <span class="threat-level-badge ${severity.className}" style="display: inline-block; padding: 3px 8px; font-size: 0.9em; position: unset;">${severity.text}</span></p>`;
+    // Store the original HTML content to restore it later
+    let originalDetailsHtml = '';
+    const severity = getSeverityClass(predictedThreatLabel);
 
-        // Display the full message or a default if not available
-        const fullMessage = incidentDetails.Message || (incidentDetails.action && incidentDetails.action.includes("Threat Detected:") ? incidentDetails.action.replace("Threat Detected: ", "") : 'No detailed message available.');
-        detailsHtml += `<p><strong>Type of Attack:</strong> ${predictedThreatLabel || 'N/A'}</p>`;
-        detailsHtml += `<p><strong>Details:</strong> ${fullMessage}</p>`;
+    originalDetailsHtml += `<p><strong>Predicted Threat:</strong> <span class="threat-level-badge ${severity.className}" style="display: inline-block; padding: 3px 8px; font-size: 0.9em; position: unset;">${severity.text}</span></p>`;
 
-        // Extract date and time for consistency in modal
-        let detailDate = 'N/A';
-        let detailTime = 'N/A';
-        if (incidentDetails['Timestamp']) {
-            try {
-                const ts = new Date(incidentDetails['Timestamp']);
-                detailDate = ts.toLocaleDateString();
-                detailTime = ts.toLocaleTimeString();
-            } catch (e) { /* continue with N/A */ }
-        } else if (incidentDetails['Flow Start']){
-             try {
-                 const ts = new Date(incidentDetails['Flow Start']);
-                 detailDate = ts.toLocaleDateString();
-                 detailTime = ts.toLocaleTimeString();
-             } catch (e) { /* continue with N/A */ }
-        } else if (incidentDetails.timestamp) { // Fallback to the database timestamp
-             try {
-                 const ts = new Date(incidentDetails.timestamp);
-                 detailDate = ts.toLocaleDateString();
-                 detailTime = ts.toLocaleTimeString();
-             } catch (e) { /* continue with N/A */ }
-        } else {
-            const now = new Date();
-            detailDate = now.toLocaleDateString();
-            detailTime = now.toLocaleTimeString();
-        }
-        detailsHtml += `<p><strong>Date:</strong> ${detailDate}</p>`;
-        detailsHtml += `<p><strong>Time:</strong> ${detailTime}</p>`;
+    // Display the full message or a default if not available
+    const fullMessage = incidentDetails.Message || (incidentDetails.action && incidentDetails.action.includes("Threat Detected:") ? incidentDetails.action.replace("Threat Detected: ", "") : 'No detailed message available.');
+    originalDetailsHtml += `<p><strong>Type of Attack:</strong> ${predictedThreatLabel || 'N/A'}</p>`;
+    originalDetailsHtml += `<p><strong>Details:</strong> ${fullMessage}</p>`;
 
-        detailsHtml += '<hr>';
-        detailsHtml += '<h4>Key Network Flow Indicators:</h4>';
-
-        // Define a preferred order for common network indicators to show first
-        const orderedKeys = [
-            'Source IP', 'Destination IP', 'Source Port', 'Destination Port',
-            'Protocol', 'Flow Duration', 'Total Fwd Packets', 'Total Backward Packets',
-            'Flow Bytes/s', 'Flow Packets/s', 'Fwd Packet Length Mean', 'Bwd Packet Length Mean',
-            'Min Packet Length', 'Max Packet Length', 'Fwd PSH Flags', 'SYN Flag Count', 'RST Flag Count',
-            'ACK Flag Count', 'URG Flag Count', 'Down/Up Ratio', 'Idle Mean', 'Active Mean'
-        ];
-
-        // Add ordered keys first
-        orderedKeys.forEach(key => {
-            if (incidentDetails.hasOwnProperty(key)) {
-                let value = incidentDetails[key];
-                if (value === null || value === undefined || value === '') {
-                    value = 'N/A';
-                } else if (typeof value === 'number') {
-                    value = value.toFixed(2);
-                }
-                detailsHtml += `<p><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</p>`;
-            }
-        });
-
-        // Add all other keys not in the preferred order
-        for (const key in incidentDetails) {
-            if (incidentDetails.hasOwnProperty(key) &&
-                !orderedKeys.includes(key) &&
-                key !== 'Predicted_Threat_Label' &&
-                key !== 'Message' &&
-                key !== 'action' &&
-                key !== 'timestamp' &&
-                key !== 'Flow Start' &&
-                key !== 'Timestamp' &&
-                key !== 'id' &&
-                key !== 'Incident ID' &&
-                key !== 'Flow ID' &&
-                key !== 'ID'
-            ) {
-                let value = incidentDetails[key];
-                if (value === null || value === undefined || value === '') {
-                    value = 'N/A';
-                } else if (typeof value === 'number') {
-                    value = value.toFixed(2);
-                }
-                detailsHtml += `<p><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</p>`;
-            }
-        }
-
-        modalContent.innerHTML = detailsHtml;
-        incidentDetailsModal.style.display = 'block';
+    // Extract date and time for consistency in modal
+    let detailDate = 'N/A';
+    let detailTime = 'N/A';
+    if (incidentDetails['Timestamp']) {
+        try {
+            const ts = new Date(incidentDetails['Timestamp']);
+            detailDate = ts.toLocaleDateString();
+            detailTime = ts.toLocaleTimeString();
+        } catch (e) { /* continue with N/A */ }
+    } else if (incidentDetails['Flow Start']){
+        try {
+            const ts = new Date(incidentDetails['Flow Start']);
+            detailDate = ts.toLocaleDateString();
+            detailTime = ts.toLocaleTimeString();
+        } catch (e) { /* continue with N/A */ }
+    } else if (incidentDetails.timestamp) { // Fallback to the database timestamp
+        try {
+            const ts = new Date(incidentDetails.timestamp);
+            detailDate = ts.toLocaleDateString();
+            detailTime = ts.toLocaleTimeString();
+        } catch (e) { /* continue with N/A */ }
+    } else {
+        const now = new Date();
+        detailDate = now.toLocaleDateString();
+        detailTime = now.toLocaleTimeString();
     }
+    originalDetailsHtml += `<p><strong>Date:</strong> ${detailDate}</p>`;
+    originalDetailsHtml += `<p><strong>Time:</strong> ${detailTime}</p>`;
+
+    originalDetailsHtml += '<hr>';
+    originalDetailsHtml += '<h4>Key Network Flow Indicators:</h4>';
+
+    // Define a preferred order for common network indicators to show first
+    const orderedKeys = [
+        'Source IP', 'Destination IP', 'Source Port', 'Destination Port',
+        'Protocol', 'Flow Duration', 'Total Fwd Packets', 'Total Backward Packets',
+        'Flow Bytes/s', 'Flow Packets/s', 'Fwd Packet Length Mean', 'Bwd Packet Length Mean',
+        'Min Packet Length', 'Max Packet Length', 'Fwd PSH Flags', 'SYN Flag Count', 'RST Flag Count',
+        'ACK Flag Count', 'URG Flag Count', 'Down/Up Ratio', 'Idle Mean', 'Active Mean'
+    ];
+
+    // Add ordered keys first
+    orderedKeys.forEach(key => {
+        if (incidentDetails.hasOwnProperty(key)) {
+            let value = incidentDetails[key];
+            if (value === null || value === undefined || value === '') {
+                value = 'N/A';
+            } else if (typeof value === 'number') {
+                value = value.toFixed(2);
+            }
+            originalDetailsHtml += `<p><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</p>`;
+        }
+    });
+
+    // Add all other keys not in the preferred order
+    for (const key in incidentDetails) {
+        if (incidentDetails.hasOwnProperty(key) &&
+            !orderedKeys.includes(key) &&
+            key !== 'Predicted_Threat_Label' &&
+            key !== 'Message' &&
+            key !== 'action' &&
+            key !== 'timestamp' &&
+            key !== 'Flow Start' &&
+            key !== 'Timestamp' &&
+            key !== 'id' &&
+            key !== 'Incident ID' &&
+            key !== 'Flow ID' &&
+            key !== 'ID'
+        ) {
+            let value = incidentDetails[key];
+            if (value === null || value === undefined || value === '') {
+                value = 'N/A';
+            } else if (typeof value === 'number') {
+                value = value.toFixed(2);
+            }
+            originalDetailsHtml += `<p><strong>${key.replace(/_/g, ' ')}:</strong> ${value}</p>`;
+        }
+    }
+
+    // Set the initial content of the modal
+    modalContent.innerHTML = originalDetailsHtml;
+    incidentDetailsModal.style.display = 'block';
+
+    // Remove any previous event listeners on the button to prevent duplicates
+    const newBtn = generateReportBtn.cloneNode(true);
+    generateReportBtn.parentNode.replaceChild(newBtn, generateReportBtn);
+
+    // Add the new click event listener
+    newBtn.addEventListener('click', async () => {
+        // Show a loading message in the modal
+        modalContent.innerHTML = '<p>Generating AI report... please wait.</p>';
+
+        try {
+            const response = await fetch('/api/generate_report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    incident_id: incidentIdForModal,
+                    threat_type: predictedThreatLabel,
+                    // Pass the full details object for a richer report
+                    details: incidentDetails
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            // Display the generated report content in the modal
+            modalContent.innerHTML = `<h3>Generated AI Report</h3>`;
+            modalContent.innerHTML += `<div class="w3-card-4 w3-padding" style="white-space: pre-wrap;">${result.report}</div>`;
+            
+        } catch (error) {
+            console.error('Error:', error);
+            modalContent.innerHTML = `<p style="color: red;">Failed to generate report. Please try again.</p>`;
+        }
+    });
+}
 
     // Fetch and display reports when the page loads
     fetchAndDisplayThreatReports();

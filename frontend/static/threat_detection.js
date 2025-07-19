@@ -46,6 +46,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to determine severity class and text based on threat label
     function getSeverityClass(threatLabel) {
+
+       
         threatLabel = String(threatLabel).toLowerCase(); // Ensure it's a string and lowercase for robust comparison
         if (threatLabel.includes('ddos') ||
             threatLabel.includes('infiltration') ||
@@ -67,6 +69,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function generateIncidentId() {
+        return Math.floor(100000 + Math.random() * 900000);
+    }
     // Function to display classification results as cards
     function displayResults(data) {
         resultsCardsContainer.innerHTML = ''; // Clear previous results

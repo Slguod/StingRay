@@ -163,6 +163,7 @@
         #modalContent .threat-level-badge {
             position: unset; /* Override absolute positioning */
         }
+    }
     </style>
 </head>
 <body class="w3-light-grey">
@@ -211,12 +212,18 @@
 <div id="incidentDetailsModal" class="w3-modal">
     <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width: 600px; border-radius: 8px;">
         <header class="w3-container w3-teal" style="border-radius: 8px 8px 0 0;">
-            <span onclick="document.getElementById('incidentDetailsModal').style.display='none'"
-                  class="w3-button w3-display-topright">&times;</span>
-            <h2>Incident Details <span id="modalIncidentId"></span></h2>
+            <div class="w3-display-container">
+                <span onclick="document.getElementById('incidentDetailsModal').style.display='none'"
+                    class="w3-button w3-display-topright">&times;</span>
+                <h2 style="padding: 16px 0;">
+                    Incident Details <span id="modalIncidentId"></span>
+                </h2>
+                <button id="generateReportBtn" class="w3-button w3-blue w3-right" style="margin-top: 10px;">
+                    Generate AI Report
+                </button>
+            </div>
         </header>
         <div class="w3-container w3-padding" id="modalContent">
-            <!-- Details will be injected here by JavaScript -->
             <p>Loading details...</p>
         </div>
         <footer class="w3-container w3-teal" style="border-radius: 0 0 8px 8px;">

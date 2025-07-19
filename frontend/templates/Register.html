@@ -22,24 +22,40 @@
       </div>
     <form>
         <h1>Create An Account</h1>
-        <label for="user-id">User ID:</label>
+        <label for="full-name">Full Name:</label>
         <div class="input-group">
-            <input type="email" placeholder="Email" id="email" required>
-            <span class="icon">⌨️</span>
+            <input type="text" placeholder="Full Name" id="full-name" required>
+            <span class="icon">👤</span>
         </div>
 
-        <label for="password">Password</label>
+        <label for="email">Email:</label>
+        <div class="input-group">
+            <input type="email" placeholder="Email" id="email" required>
+            <span class="icon">✉️</span>
+        </div>
+
+        <label for="phone-number">Phone Number:</label>
+        <div class="input-group">
+            <input type="tel" placeholder="Phone Number" id="phone-number" required>
+            <span class="icon">📞</span>
+        </div>
+
+        <label for="password">Password:</label>
         <div class="input-group">
             <input type="password" placeholder="Password" id="password" required>
-            <span class="icon">⌨️</span>
+            <span class="icon">🔒</span>
+        </div>
+
+        <label for="confirm-password">Confirm Password:</label>
+        <div class="input-group">
+            <input type="password" placeholder="Confirm Password" id="confirm-password" required>
+            <span class="icon">🔒</span>
         </div>
 
         <button id="register-btn" type="submit">Create Account</button>
-
         <div class="form">
             <p>Have an account?
                 <span>
-                   
                     <a href="/login">Login Here</a>
                 </span>
             </p>

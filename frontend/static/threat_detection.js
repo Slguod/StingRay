@@ -67,6 +67,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+        function generateIncidentId() {
+        return Math.floor(100000 + Math.random() * 900000);
+        }
+
     // Function to display classification results as cards
     function displayResults(data) {
         resultsCardsContainer.innerHTML = ''; // Clear previous results

@@ -30,7 +30,6 @@
         .main-content {
             margin-left: 20%; /* Space for the sidebar */
             padding: 1px 16px;
-            margin-top: 60px; /* Space for the topnav, as per your original file */
             padding-bottom: 30px; /* Add some padding at the bottom */
         }
 
@@ -163,6 +162,48 @@
         #modalContent .threat-level-badge {
             position: unset; /* Override absolute positioning */
         }
+
+                /* Filter controls styling */
+        .filter-controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            display: flex; /* Use flexbox for alignment */
+            gap: 15px; /* Spacing between elements */
+            align-items: center; /* Vertically align items */
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .filter-controls label {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .filter-controls select {
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .filter-controls button {
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+        }
+
+        .filter-controls button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body class="w3-light-grey">
@@ -200,6 +241,23 @@
     <div class="section-header">Threat Reports</div>
 
     <div class="reports-container">
+        <div class="filter-controls">
+            <label for="threatTypeFilter">Severity Level:</label>
+            <select id="threatTypeFilter">
+                <option value="All">All Severities</option>
+                <option value="High">High</option>
+                <option value="Moderate">Moderate</option>
+                <option value="Low">Low</option>
+                <option value="Unknown">Unknown</option>
+            </select>
+
+            <label for="attackTypeFilter">Attack Type:</label>
+            <select id="attackTypeFilter">
+                <option value="All">All Attack Types</option>
+                </select>
+
+            <button id="clearFiltersBtn">Clear Filters</button>
+        </div>
         <h2>Saved Threat Incidents</h2>
         <div id="threatReportsContainer">
             <p>Loading threat reports...</p>
@@ -214,6 +272,9 @@
             <span onclick="document.getElementById('incidentDetailsModal').style.display='none'"
                   class="w3-button w3-display-topright">&times;</span>
             <h2>Incident Details <span id="modalIncidentId"></span></h2>
+                        <button id="generateReportBtn" class="w3-button w3-blue w3-right" style="margin-top: 10px;">
+                    Generate AI Report
+                </button>
         </header>
         <div class="w3-container w3-padding" id="modalContent">
             <!-- Details will be injected here by JavaScript -->

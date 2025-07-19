@@ -10,6 +10,8 @@ import os
 import subprocess
 from urllib.parse import urlparse
 import pandas as pd
+import google.generativeai as genai
+from dotenv import load_dotenv
 import openpyxl
 from datetime import datetime, timezone
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures # For preprocessing
@@ -34,6 +36,13 @@ db = SQLAlchemy(app)
 
 # --- NEW: Model Folder and Global Model Variables ---
 MODEL_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'models') # Define the models folder path
+
+load_dotenv()
+
+# Configure the Gemini API key
+gemini_api_key = os.getenv("GEMINI_API_KEY")
+genai.configure(api_key=gemini_api_key)
+model = genai.GenerativeModel('models/gemini-1.5-flash')
 
 # Ensure UPLOAD_FOLDER and MODEL_FOLDER exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -647,6 +656,39 @@ def classify():
     except Exception as e:
         app.logger.error(f"Error processing file for classification: {e}", exc_info=True)
         return jsonify({"error": f"Error processing file for classification: {e}"}), 500
+    
+@app.route('/api/generate_report', methods=['POST'])
+def generate_report():
+    try:
+        data = request.get_json()
+        incident_id = data.get('incident_id')
+        threat_type = data.get('threat_type')
+        details_obj = data.get('details')
+
+        if not all([incident_id, threat_type, details_obj]):
+            return jsonify({'error': 'Missing incident data'}), 400
+
+        # Convert the dictionary of details into a string format for the prompt
+        details_str = "\n".join([f"{key.replace('_', ' ')}: {value}" for key, value in details_obj.items()])
+
+        prompt = (
+                f"Based on the following network incident data, perform two tasks:\n\n"
+                f"1. Create a concise summary of the incident and the potential threat.\n"
+                f"2. Suggest specific, actionable steps to prevent this type of incident in the future.\n\n"
+                f"Incident ID: {incident_id}\n"
+                f"Threat Type: {threat_type}\n"
+                f"Network Flow Details:\n{details_str}\n\n"
+                f"Format your response using markdown with clear headings for 'Summary' and 'Prevention Strategies'."
+                )
+
+        response = model.generate_content(prompt)
+        report_content = response.text
+
+        return jsonify({'report': report_content}), 200
+
+    except Exception as e:
+        print(f"Error generating AI report: {e}")
+        return jsonify({'error': 'An error occurred while generating the report.'}), 500
 
 # This block runs only when app.py is executed directly
 if __name__ == '__main__':

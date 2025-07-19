@@ -3,6 +3,7 @@ import numpy as np
 import joblib # For loading .pkl files
 from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import cast, Date
 from flask_cors import CORS
 from datetime import datetime
 from werkzeug.utils import secure_filename
@@ -554,32 +555,18 @@ def get_threat_reports():
 @app.route('/api/calendar_activity', methods=['GET'])
 def get_calendar_activity():
     try:
-        username = request.args.get('username')
+        # Query the database for distinct dates from the timestamp field
+        active_dates_query = db.session.query(cast(IncidentLog.timestamp, Date)).distinct()
+        active_dates_results = active_dates_query.all()
         
-        query = IncidentLog.query
-        if username:
-            query = query.filter_by(username=username)
+        # Format the dates as a list of strings ('YYYY-MM-DD')
+        formatted_dates = [date[0].isoformat() for date in active_dates_results]
+        
+        return jsonify(formatted_dates), 200
 
-        incidents = query.order_by(IncidentLog.timestamp).all()
-        
-        activity_dates = set()
-        for incident in incidents:
-            if incident.timestamp:
-                try:
-                    dt_object = datetime.strptime(str(incident.timestamp), '%Y-%m-%d %H:%M:%S.%f%z')
-                    activity_dates.add(dt_object.strftime('%Y-%m-%d'))
-                except ValueError:
-                    try:
-                        dt_object = datetime.strptime(str(incident.timestamp), '%Y-%m-%d %H:%M:%S%z')
-                        activity_dates.add(dt_object.strftime('%Y-%m-%d'))
-                    except ValueError:
-                        continue
-        sorted_dates = sorted(list(activity_dates))
-        
-        return jsonify(sorted_dates), 200
     except Exception as e:
-        print(f"Error in get_calendar_activity: {e}")
-        return jsonify({'error': 'Failed to fetch calendar activity'}), 500
+        print(f"Error fetching calendar activity: {e}")
+        return jsonify({"error": "Could not fetch calendar data"}), 500
         
 @app.route('/api/users', methods=['GET'])
 def get_users():
@@ -592,8 +579,7 @@ def get_users():
         print(f"Error fetching users: {e}")
         return jsonify({'error': 'Failed to fetch users'}), 500
         
-# --- MODIFIED: Threat Classification Model Endpoint ---
-# --- MODIFIED: Threat Classification Model Endpoint ---
+
 @app.route('/classify', methods=['POST'])
 def classify():
     file = None

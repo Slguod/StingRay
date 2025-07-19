@@ -64,17 +64,66 @@
   <div class="w3-card w3-white w3-padding w3-margin-bottom" style="max-width: 700px;">
     <h4>Account Settings</h4>
     <div class="w3-container">
-      <p><a href="#" class="w3-text-blue">Edit Profile Information</a></p>
-      <p><a href="#" class="w3-text-blue">Change Password</a></p>
-      <p><a href="#" class="w3-text-blue">Enable Two-Factor Authentication (2FA)</a></p>
-      <p><a href="#" class="w3-text-blue">Notification Preferences</a></p>
-      <p><a href="#" class="w3-text-blue">Language & Region Settings</a></p>
-      <p><a href="#" class="w3-text-blue">Enable Dark Mode</a></p>
+      <p><a href="#" id="edit-profile-link" class="w3-text-blue">Edit Profile Information</a></p>
+      <p><a href="#" id="change-password-link" class="w3-text-blue">Change Password</a></p>
       <p><a href="#" id="sign-out-link" class="w3-text-red">Sign Out</a></p>
     </div>
+  </div>
+
   </div>
 </div>
 <script type="module" src="{{ url_for('static', filename='firebase-init.js') }}"></script>
 <script type="module" src="{{ url_for('static', filename='userprofile.js') }}"></script>
+
+<div id="editProfileModal" class="w3-modal">
+  <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+    <div class="w3-container">
+      <span onclick="document.getElementById('editProfileModal').style.display='none'"
+            class="w3-button w3-display-topright">&times;</span>
+      <h2>Edit Profile</h2>
+      <form id="editProfileForm" class="w3-container">
+        <p>
+          <label for="edit-full-name">Full Name</label>
+          <input class="w3-input w3-border" type="text" id="edit-full-name" required>
+        </p>
+        <p>
+          <label for="edit-phone-number">Phone Number</label>
+          <input class="w3-input w3-border" type="text" id="edit-phone-number">
+        </p>
+        <p>
+          <button type="submit" class="w3-button w3-blue w3-margin-bottom">Save Changes</button>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="changePasswordModal" class="w3-modal">
+  <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+    <div class="w3-container">
+      <span onclick="document.getElementById('changePasswordModal').style.display='none'"
+            class="w3-button w3-display-topright">&times;</span>
+      <h2>Change Password</h2>
+      <form id="changePasswordForm" class="w3-container">
+        <p>
+          <label for="current-password">Current Password</label>
+          <input class="w3-input w3-border" type="password" id="current-password" required>
+        </p>
+        <p>
+          <label for="new-password">New Password</label>
+          <input class="w3-input w3-border" type="password" id="new-password" required>
+        </p>
+        <p>
+          <label for="confirm-new-password">Confirm New Password</label>
+          <input class="w3-input w3-border" type="password" id="confirm-new-password" required>
+        </p>
+        <p>
+          <button type="submit" class="w3-button w3-blue w3-margin-bottom">Change Password</button>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Log Analysis</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Saira">
+    <link rel="stylesheet" href="/static/Stingray.css" />
+    <style>
+        html, body, h1, h2, h3, h4, h5 {
+            font-family: "Saira", sans-serif;
+        }
+
+        .main-content {
+            margin-left: 20%;
+            padding: 1px 16px;
+            position: relative; /* Crucial for absolute positioning of the controls */
+        }
+
+        .section-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            padding-top: 20px; /* Adjust padding-top to ensure content is below controls */
+        }
+
+        .chart-container {
+            width: 90%;
+            margin: 20px auto;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+        }
+
+        .chart-container h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .charts-flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 20px;
+        }
+
+        .chart-item {
+            flex: 1;
+            min-width: 450px; /* Minimum width for each chart */
+            max-width: calc(50% - 10px);
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: #fff;
+            box-sizing: border-box;
+            max-height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chart-item canvas {
+            max-height: calc(100% - 30px);
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        @media (max-width: 900px) {
+            .chart-item {
+                min-width: unset;
+                max-width: 100%;
+                max-height: 400px;
+            }
+        }
+
+        .log-table-container {
+            width: 90%;
+            margin: 30px auto;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        /* NEW: Styles for the top-right control group */
+        .top-right-controls {
+            position: absolute;
+            top: 20px;
+            right: 16px;
+            z-index: 100;
+            display: flex; /* Use flexbox for alignment */
+            align-items: center; /* Vertically align items */
+            gap: 10px; /* Space between elements */
+        }
+
+        /* Adjust dropdown width */
+        #incidentFilter {
+            width: 150px; /* Adjust as needed */
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body class="w3-light-grey">
+
+<div class="topnav">
+    <a href="#logo">
+        <img src="{{ url_for('static', filename='images/stingraylogo.png') }}" style="height:35px;" alt="Stingray Logo" />
+         </a>
+    <div class="topnav-right">
+        <a href="#settings">
+            <img src="https://cdn-icons-png.flaticon.com/512/3953/3953226.png" style="width:25px;height:25px;">
+        </a>
+        <a href="{{ url_for('user_profile') }}">
+            <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" style="width:25px;height:25px;">
+        </a>
+    </div>
+</div>
+
+<div class="main-content" style="margin-top: 60px;"></div>
+
+<ul>
+    <li><a href="{{ url_for('dashboard') }}">
+        <img src="https://cdn-icons-png.flaticon.com/512/13135/13135965.png" style="width:25px;height:25px;"> My Dashboard
+    </a></li>
+    <li><a href="{{ url_for('log_analysis') }}">
+        <img src="https://cdn-icons-png.flaticon.com/512/9422/9422925.png" style="width:25px;height:25px;"> Log Analysis
+    </a></li>
+    <li><a href="{{ url_for('reports') }}">
+        <img src="https://cdn-icons-png.flaticon.com/512/1055/1055644.png" style="width:25px;height:25px;"> Reports
+    </a></li>
+    <li><a href="{{ url_for('threat_detection') }}">
+        <img src="https://cdn-icons-png.flaticon.com/512/10412/10412137.png" style="width:25px;height:25px;"> Threat Detection
+    </a></li>
+</ul>
+
+
+<div class="main-content">
+    <button class="w3-button w3-white w3-xxlarge w3-hide-large" onclick="w3_open()">&#9776;</button>
+
+    <div class="top-right-controls">
+        <label for="incidentFilter" style="margin-right: 5px; font-weight: bold;">Show Last:</label>
+        <select id="incidentFilter" class="w3-select w3-border">
+            <option value="1">1 Incident</option>
+            <option value="10">10 Incidents</option>
+            <option value="20">20 Incidents</option>
+            <option value="30" selected>30 Incidents</option> <option value="40">40 Incidents</option>
+            <option value="50">50 Incidents</option>
+            <option value="60">60 Incidents</option>
+        </select>
+        <button id="applyFilterBtn" class="w3-button w3-blue">Apply Filter</button>
+        <button id="addMoreGraphsBtn" class="w3-button w3-green">Add More Graphs</button>
+    </div>
+
+    <div class="section-header">Log Analysis</div>
+
+    <div class="chart-container">
+        <h3>Threat Severity Distribution</h3>
+        <div class="charts-flex-container">
+            <div class="chart-item">
+                <h3>Severity Pie Chart</h3>
+                <canvas id="severityPieChart"></canvas>
+            </div>
+            <div class="chart-item">
+                <h3>Top Threat Types</h3>
+                <canvas id="threatTypesBarChart"></canvas>
+            </div>
+        </div>
+        <p id="chartMessage" style="text-align: center; margin-top: 20px; display: none;"></p>
+    </div>
+
+    <div class="log-table-container">
+        <h3>Recent Incident Logs</h3>
+        <table class="w3-table w3-bordered w3-striped w3-hoverable" id="incidentLogTable">
+            <thead>
+                <tr class="w3-light-grey">
+                    <th>Timestamp</th>
+                    <th>Source IP</th>
+                    <th>Action</th>
+                    <th>Severity</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+        <p id="logTableMessage" style="margin-top: 10px; text-align: center;"></p>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/static/log_analysis.js"></script>
+
+</body>
+</html>

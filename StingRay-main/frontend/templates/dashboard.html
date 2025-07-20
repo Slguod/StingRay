@@ -186,10 +186,10 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Saira"}
     <i class="fas fa-search search-icon"></i>
    </div>
    <div class="action-buttons">
-    <button id="createDbButton">
+    <button class="cdb-button" id="createDbButton">
       <i class="fas fa-plus"></i> Create Database
     </button>
-    <button id="uploadDbButton">
+    <button class="udb-button" id="uploadDbButton">
       <i class="fas fa-upload"></i> Upload Data File
     </button> </div>
   </div>
@@ -199,11 +199,11 @@ html,body,h1,h2,h3,h4,h5 {font-family: "Saira"}
     <h3>Create New Database</h3>
     <label for="databaseName">Database Name:</label>
     <input type="text" id="databaseName" placeholder="Enter new database name"/>
-    <button onclick="createDatabase()">Save</button>
+    <button class="click-button" onclick="createDatabase()">Save</button>
   </div>
 
   <div id="uploadDbForm" class="input-group">
-    <h3>Upload CSV/Excel File for Storage</h3> <label for="dumpFile">Select CSV or Excel file:</label> <input type="file" id="dumpFile" accept=".csv,.xls,.xlsx" /><button id="uploadFileButton">Upload</button></div>
+    <h3>Upload CSV/Excel File for Storage</h3> <label for="dumpFile">Select CSV or Excel file:</label> <input type="file" id="dumpFile" accept=".csv,.xls,.xlsx" /><button class="click-button" id="uploadFileButton">Upload</button></div>
 
 <div class="widget-data">
     <h2>Available Databases</h2>

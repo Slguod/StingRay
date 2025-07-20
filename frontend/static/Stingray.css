@@ -13,6 +13,17 @@ body {
   z-index: 1000;         /* 👈 Keeps it above other elements */
 }
 
+.nav-title {
+  float: left; 
+  color: #f2f2f2; 
+  font-size: 36px; 
+  font-weight: bold; 
+  line-height: 45px;
+  padding: 7px 16px; 
+  padding-bottom: 0px;
+
+}
+
 
 /* Style the links inside the navigation bar */
 .topnav a {
@@ -189,4 +200,14 @@ li a:hover:not(.active) {
     font-weight: bold;
     border: 1px solid #007BFF;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.widget-data {
+    flex: 1;
+    min-width: 300px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 50px 0px;
 }

@@ -25,7 +25,7 @@ app = Flask(__name__,
 CORS(app) # Enable CORS for all origins
 
 # Database configuration (using environment variable or a default)
-DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://postgres:Lukomon99@127.0.0.1:5432/Stingray')
+DATABASE_URL = os.environ.get('DATABASE_URL')
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploaded_data_files')
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
